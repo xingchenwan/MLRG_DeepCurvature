@@ -28,7 +28,9 @@ train_network(
 
 # 3. Let's consider the spectrum on the 100th epoch (last training epoch)
 
-# Let's first use the Lanczos estimation on the Generalised Gauss-Newton matrix
+# Let's first use the Lanczos estimation on the Generalised Gauss-Newton matrix - as a preliminary example, we run 20
+# Lanczos interations
+
 lanc = compute_eigenspectrum(
     dataset='CIFAR100',
     data_path='data/',
