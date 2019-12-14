@@ -3,28 +3,10 @@ import matplotlib.pyplot as plt
 
 
 def plot_spectrum(mode, *args, **kwargs):
-    if mode == 'diag':
-        plot_spectrum_diag(*args, **kwargs)
-    elif mode == 'lanczos':
+    if mode == 'lanczos':
         plot_spectrum_lanczos(*args, **kwargs)
     else:
         raise ValueError('Mode' + str(mode) + " is not understood.")
-
-
-def plot_spectrum_diag(
-        path: str
-):
-    """
-    Generate a histogram plot of the diagonal approximation of the eigenspectrum
-    Parameters
-    ----------
-    path
-
-    Returns
-    -------
-
-    """
-    pass
 
 
 def plot_spectrum_lanczos(

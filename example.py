@@ -24,8 +24,12 @@ train_network(
 # 2. After this step, you should have a bunch of stats- and checkpoint files under the chosen dir. In this case, they
 # are stored under .result/VGG16-CIFAR100. The stats files contains the key information of the training and testing (if
 # that epoch is scheduled for testing) information, where the checkpoint-00XXX.pt contains the state_dict of the model
-# and the optimizer that we need for later analyses.
-
+# and the optimizer that we need for later analyses. Lets first visualise the training process
+plot_training(
+    dir='result/VGG16-CIFAR100/',
+    show_top_5=True
+)
+plt.show()
 # 3. Let's consider the spectrum on the 100th epoch (last training epoch)
 
 # Let's first use the Lanczos estimation on the Generalised Gauss-Newton matrix - as a preliminary example, we run 20
