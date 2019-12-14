@@ -5,7 +5,7 @@ import tqdm
 import torch
 import numpy as np
 import torch.nn.functional as F
-from optimizers import KFACOptimizer, CurveBall
+from optimizers import KFACOptimizer
 from backpack import extend, backpack
 from backpack.extensions import DiagGGN
 

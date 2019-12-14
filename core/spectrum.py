@@ -12,7 +12,7 @@ def compute_eigenspectrum(
         data_path: str,
         model: str,
         checkpoint_path: str,
-        curvature_matrix: str,
+        curvature_matrix: str = 'hessian_lanczos',
         use_test: bool = True,
         batch_size: int = 128,
         num_workers: int = 4,
@@ -224,6 +224,7 @@ def compute_eigenspectrum(
             # return output.unsqueeze(1)¬
             return output.cpu().unsqueeze(1)
 
+    w = torch.cat([param.detach().cpu().view(-1) for param in model.parameters])
     if curvature_matrix in ['ggn_lanczos', 'hessian_lanczos']:
         productor = CurvVecProduct(loader, model, criterion, curvature_matrix)
         utils.bn_update(full_loader, model)
@@ -245,6 +246,7 @@ def compute_eigenspectrum(
         if save_eigvec:
             torch.save(
                 {
+                    'w': w,
                     'eigvals': eigvals if eigvals is not None else None,
                     'gammas': gammas if gammas is not None else None,
                     'V': V if V is not None else None,
@@ -253,7 +255,13 @@ def compute_eigenspectrum(
             )
         np.savez(
             save_spectrum_path,
+            w=w.numpy(),
             eigvals=eigvals.numpy() if eigvals is not None else None,
             gammas=gammas.numpy() if gammas is not None else None
         )
-    return eigvals, gammas, V
+    return {
+        'w': w,
+        'eigvals': eigvals,
+        'gammas' :gammas,
+        'V': V
+    }

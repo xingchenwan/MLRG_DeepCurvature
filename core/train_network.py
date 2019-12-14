@@ -14,7 +14,7 @@ def train_network(
         model: str,
         optimizer: str = 'SGD',
         optimizer_kwargs: dict = None,
-        use_test: bool = False,
+        use_test: bool = True,
         batch_size: int = 128,
         num_workers: int = 4,
         resume: str = None,
@@ -169,7 +169,7 @@ def train_network(
     # Initialise the optimizer
     o = getattr(optimizers, optimizer)
     optim = o(
-        model.parameters()
+        model.parameters(),
         **optimizer_kwargs
     )
 
@@ -190,7 +190,7 @@ def train_network(
         start_epoch,
         epoch=start_epoch,
         state_dict=model.state_dict(),
-        optimizer=optimizer.state_dict()
+        optimizer=optim.state_dict()
     )
 
     for epoch in range(start_epoch, epochs):

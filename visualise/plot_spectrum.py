@@ -28,6 +28,7 @@ def plot_spectrum_diag(
 
 
 def plot_spectrum_lanczos(
+        result: dict,
         path: str,
         display_spectrum_stats: bool = False,
 ):
@@ -35,6 +36,7 @@ def plot_spectrum_lanczos(
     Generate a stem plot of the eigenspectrum, if we are using Lanczos
     Parameters
     ----------
+    result: dict: the return values from core/spectrum
     path: str: the path string to the saved spectrum result
     display_spectrum_stats: if True, a set of on-screen statistics of the eigenspectrum will be displayed
 
@@ -42,12 +44,16 @@ def plot_spectrum_lanczos(
     -------
 
     """
-    a = np.load(path)
+    if result is not None:
+        a = result
+    elif path is not None:
+        a = np.load(path)
+    else: raise ValueError('Either result or path needs to be non-empty.')
     eig = []
     weight = []
-    for i in range(0, len(a.f.eigvals)):
-        eig.append(a.f.eigvals[i, 0])
-        weight.append(a.f.gammas[i])
+    for i in range(0, len(a['f'].eigvals)):
+        eig.append(a['f'].eigvals[i, 0])
+        weight.append(a['f'].gammas[i])
     markerline, stemlines, baseline = plt.stem(eig, weight, '-', linefmt='black')
     plt.xlabel('Eigenvalue Size')
     plt.ylabel('Spectral Density')
@@ -70,13 +76,13 @@ def plot_spectrum_lanczos(
         print('\n Spectral Statistics')
         print('Maximum Value is ' + str(max(eig)))
         print('Minimum Value is ' + str(min(eig)))
-        print('Mean of Bulk is '  + str(np.median(eig)))
+        print('Mean of Bulk is ' + str(np.median(eig)))
         print('number of negative eigenvalues')
 
         negeigs = 0
         negweight = 0
         for i in range(0, len(eig)):
-            if (eig[i] < 0):
+            if eig[i] < 0:
                 negeigs = negeigs + 1
                 #             print('eig val')
                 #             print(eig[i])
