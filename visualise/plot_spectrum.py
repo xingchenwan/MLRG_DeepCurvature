@@ -28,9 +28,9 @@ def plot_spectrum_diag(
 
 
 def plot_spectrum_lanczos(
-        result: dict,
-        path: str,
-        display_spectrum_stats: bool = False,
+        result: dict = None,
+        path: str = None,
+        display_spectrum_stats: bool = True,
 ):
     """
     Generate a stem plot of the eigenspectrum, if we are using Lanczos
@@ -51,9 +51,9 @@ def plot_spectrum_lanczos(
     else: raise ValueError('Either result or path needs to be non-empty.')
     eig = []
     weight = []
-    for i in range(0, len(a['f'].eigvals)):
-        eig.append(a['f'].eigvals[i, 0])
-        weight.append(a['f'].gammas[i])
+    for i in range(0, len(a['eigvals'])):
+        eig.append(a['eigvals'][i, 0])
+        weight.append(a['gammas'][i])
     markerline, stemlines, baseline = plt.stem(eig, weight, '-', linefmt='black')
     plt.xlabel('Eigenvalue Size')
     plt.ylabel('Spectral Density')

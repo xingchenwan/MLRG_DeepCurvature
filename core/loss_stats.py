@@ -33,7 +33,7 @@ def compute_loss_stats(
     ----------
     dataset: str: ['CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32'*]: the dataset on which you would like to train the
     model. For ImageNet 32, we use the downsampled 32 x 32 Full ImageNet dataset. We do not provide download due to
-    the proprietary issues, and please drop the data of ImageNet 32 in 'data/' folder    data_path
+    the proprietary issues, and please drop the data of ImageNet 32 in 'data/' folder
 
     data_path: str: the path string of the dataset
 

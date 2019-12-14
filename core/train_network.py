@@ -296,9 +296,6 @@ def train_network(
             table = table.split('\n')[2]
         print(table)
 
-        if np.isnan(test_res['loss']):
-            break
-
     if epochs % save_freq != 0:
         utils.save_checkpoint(
             dir,

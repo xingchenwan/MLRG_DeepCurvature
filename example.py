@@ -1,20 +1,22 @@
-# Annotated example of usage of this package.
+# Here we provide an example usage of how to use the MLRG DeepCurvature Package
+# ---# Script Format #---
+
 from core import *
 from visualise import *
 import matplotlib.pyplot as plt
 
-# 1. Train a VGG16 network on CIFAR 100. Let's train for 200 epochs (this will take a while - on test computer with
+# 1. Train a VGG16 network on CIFAR 100. Let's train for 100 epochs (this will take a while - on test computer with
 # NVidia GeForce RTX 2080 Ti, each epoch of training takes ~ 10 seconds))
 train_network(
     dir='result/VGG16-CIFAR100/',
     dataset='CIFAR100',
     data_path='data/',
-    epochs=200,
+    epochs=100,
     model='VGG16',
     optimizer='SGD',
     optimizer_kwargs={
-        'lr': 0.1,
-        'momentum': 0.1,
+        'lr': 0.03,
+        'momentum': 0.9,
         'weight_decay': 5e-4
     }
 )
@@ -24,31 +26,34 @@ train_network(
 # that epoch is scheduled for testing) information, where the checkpoint-00XXX.pt contains the state_dict of the model
 # and the optimizer that we need for later analyses.
 
-# 3. Let's consider the spectrum on the 200th epoch (last training epoch)
+# 3. Let's consider the spectrum on the 100th epoch (last training epoch)
 
-# Let's first use the Lanczos estimation
+# Let's first use the Lanczos estimation on the Generalised Gauss-Newton matrix
 lanc = compute_eigenspectrum(
     dataset='CIFAR100',
     data_path='data/',
     model='VGG16',
-    checkpoint_path='result/VGG16-CIFAR100/checkpoint-00200.pt',
-    save_spectrum_path='result/VGG16-CIFAR100/spectra/spectrum-00200-ggn_lanczos',
+    checkpoint_path='result/VGG16-CIFAR100/checkpoint-00100.pt',
+    save_spectrum_path='result/VGG16-CIFAR100/spectra/spectrum-00100-ggn_lanczos',
     save_eigvec=True,
+    lanczos_iters=20,
     curvature_matrix='ggn_lanczos',
 )
 
-# We compare it against the Monte Carlo sampling of diagonal approximation
-diag = compute_eigenspectrum(
+
+# 4. Visualise the result using a stem plot
+plot_spectrum('lanczos', path='result/VGG16-CIFAR100/spectra/spectrum-00100-ggn_lanczos.npz')
+plt.show()
+
+# 5. Visualise loss landscape
+build_loss_landscape(
     dataset='CIFAR100',
     data_path='data/',
     model='VGG16',
-    checkpoint_path='result/VGG16-CIFAR100/checkpoint-00200.pt',
-    save_spectrum_path='result/VGG16-CIFAR100/spectra/spectrum-00200-ggn_diag_mc',
-    save_eigvec=True,
-    curvature_matrix='ggn_diag_mc',
+    spectrum_path='result/VGG16-CIFAR100/spectra/spectrum-00100-ggn_lanczos',
+    checkpoint_path='result/VGG16-CIFAR100/checkpoint-00100.pt',
+    save_path='result/VGG16-CIFAR100/losslandscape-00100.npz'
 )
 
-# 4. Compare the difference by plotting the two approximations
-plot_spectrum('diag', diag)
-plot_spectrum('lanczos', lanc)
+plot_loss_landscape('result/VGG16-CIFAR100/losslandscape-00100.npz')
 plt.show()

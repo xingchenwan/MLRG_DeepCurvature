@@ -150,7 +150,7 @@ def make_layers_backpack(cfg, batch_norm=True):
     return layers
 
 
-def get_backpacked_VGG(model: VGG, depth=6, batch_norm=False, num_classes=10, cuda=True):
+def get_backpacked_VGG(model: VGG, depth=16, batch_norm=False, num_classes=10, cuda=True):
 
     import backpack, numpy as np
 
@@ -185,6 +185,6 @@ def get_backpacked_VGG(model: VGG, depth=6, batch_norm=False, num_classes=10, cu
     #     offset = 0 # Apologies for the magic number, but this is just an expediency for now. Xingchen
     # else:
     #     raise NotImplementedError
-    backpacked_model, _ = _copy_block_content(model.classifier, backpacked_model, offset)
+    backpacked_model, _ = _copy_block_content(model.classifier, backpacked_model, 32)
     backpacked_model.to('cuda' if cuda else 'cpu')
     return backpacked_model

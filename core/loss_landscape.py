@@ -24,21 +24,44 @@ def build_loss_landscape(
         swag: bool = False,
 ) -> dict:
     """
+    This function loads a checkpoint from the network training, and the spectrum result from Lanczos algorithm, and
+    perturbs the weight by a specified amount in each of the eigenvalue directions and then store the resulting train/
+    testing loss/accuracy after the perturbation. This tool is only for spectrua computed using the Lanczos algorithm
 
-    :param dataset:
-    :param data_path:
-    :param model:
-    :param spectrum_path:
-    :param checkpoint_path:
-    :param use_test:
-    :param batch_size:
-    :param num_workers:
-    :param save_path:
-    :param dist:
-    :param n_points:
+    :param   dataset: str: ['CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32'*]: the dataset on which you would like to train the
+    model. For ImageNet 32, we use the downsampled 32 x 32 Full ImageNet dataset. We do not provide download due to
+    the proprietary issues, and please drop the data of ImageNet 32 in 'data/' folder
+
+    :param data_path: str: the path string of the dataset
+
+    :param model: str: the neural network architecture you would like to train. All available models are listed under 'models'/
+    Example: VGG16BN, PreResNet110 (Preactivated ResNet - 110 layers)
+
+    :param spectrum_path: str: the output spectrum from the Lanczos eigenspectrum
+    Note: only results using Lanczos algorithm can be used; diagonal approximations are not applicable here
+
+    :param checkpoint_path: str: the checkpoint from network training
+
+    :param use_test: bool: if True, you will test the model on the test set. If not, a portion of the training data will be
+    assigned as the validation set.
+
+    :param batch_size: int: the minibatch size
+
+    :param num_workers: number of workers for the dataloader
+
+    :param save_path: if provided, the loss stats dictionary will be saved an additional copy as numpy array in the specified
+    path.
+
+    :param dist: float. distance to travel along all directions (default: 60.0)
+
+    :param n_points: number of points on a grid (default: 21)
+
     :param seed:
+
     :param device:
+
     :param swag:
+
     :return:
     """
     if device == 'cuda':
@@ -64,8 +87,6 @@ def build_loss_landscape(
         shuffle_train=False,
     )
     print('Preparing model')
-    model = model_cfg.base(*model_cfg.args, num_classes=num_classes, **model_cfg.kwargs)
-    model.to(device)
 
     if not swag:
         model = model_cfg.base(*model_cfg.args, num_classes=num_classes, **model_cfg.kwargs)
@@ -82,6 +103,7 @@ def build_loss_landscape(
         swag_model.set_swa()
         model = swag_model.base_model
 
+    model.to(device)
     num_parameters = sum([p.numel() for p in model.parameters()])
     print('Loading %s' % spectrum_path)
     basis_dict = torch.load(spectrum_path)
@@ -139,6 +161,7 @@ def build_loss_landscape(
                 table = '\n'.join([table[1]] + table)
             else:
                 table = table.split('\n')[2]
+            print('Iteration: '+str(i * len(ts) + j) + '/' + str(len(ts) * len(idx)))
         print(table)
 
     if save_path is not None:

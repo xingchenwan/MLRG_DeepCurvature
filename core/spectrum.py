@@ -49,12 +49,6 @@ def compute_eigenspectrum(
         hessian_lanczos: Lanczos algorithm of Hessian matrix
         ggn_lanczos: Lanczos algorithm on Generalised Gauss-Newton (GGN)
         cov_grad_lancozs: Lanczos algorithm on Covariance of Gradients
-        hessian_diag: Diagonal approximation of Hessian (Exact, and only works for very small toy models if you do
-        not have access to a massive amount of VRAM. Uses Backpack interface)
-        ggn_diag: Diagonal approximation of GGN (Exact, and only works for very small toy models if you do
-        not have access to a massive amount of VRAM. Uses Backpack interface)
-        ggn_diag_mc: Monte-carlo Diagonal approximation of GGN. This can be called on realistic models, and is more
-        computationally efficient. Uses Backpack interface)
 
         WARNING: the Backpack package (the diagonal computation interface) we use does not support Residual layers in
         ResNets and derived networks (as of 14 Dec 2019),
@@ -105,12 +99,7 @@ def compute_eigenspectrum(
     if device == 'cuda':
         if not torch.cuda.is_available():
             device = 'cpu'
-    assert curvature_matrix in ['hessian_lanczos', 'ggn_lanzcos', 'cov_grad_lanczos',
-                                'hessian_diag', 'ggn_diag', 'ggn_diag_mc']
-    if curvature_matrix in ['ggn_diag', 'ggn_diag_mc', 'hessian_diag']:
-        try: import backpack
-        except ImportError:
-            raise ImportError("To compute hessian_diag or gn_diag, you need to install backpack extension to pytorch.")
+    assert curvature_matrix in ['hessian_lanczos', 'ggn_lanczos', 'cov_grad_lanczos',]
 
     torch.backends.cudnn.benchmark = True
     if seed is not None:
@@ -156,6 +145,7 @@ def compute_eigenspectrum(
 
     print('Preparing model')
     print(*model_cfg.args, dict(**model_cfg.kwargs))
+
     if not swag:
         model = model_cfg.base(*model_cfg.args, num_classes=num_classes, **model_cfg.kwargs)
         print('Loading %s' % checkpoint_path)
@@ -224,24 +214,14 @@ def compute_eigenspectrum(
             # return output.unsqueeze(1)¬
             return output.cpu().unsqueeze(1)
 
-    w = torch.cat([param.detach().cpu().view(-1) for param in model.parameters])
-    if curvature_matrix in ['ggn_lanczos', 'hessian_lanczos']:
-        productor = CurvVecProduct(loader, model, criterion, curvature_matrix)
-        utils.bn_update(full_loader, model)
-        Q, T = lanczos_tridiag(productor, lanczos_iters, dtype=torch.float32, device='cpu',
-                               matrix_shape=(num_parametrs, num_parametrs))
-        eigvals, eigvects = T.eig(eigenvectors=True)
-        gammas = eigvects[0, :] ** 2
-        V = eigvects.t() @ Q.t()
-    else:
-        from curvature.utils import curv_diag
-        res = curv_diag(loader, model,
-                        num_classes=num_classes,
-                        cuda=device == 'cuda', criterion=criterion,
-                        bn_train_mode=bn_train_mode, extensions=curvature_matrix)
-        eigvals = list(res.values())[0]
-        gammas = None
-        V = None
+    w = torch.cat([param.detach().cpu().view(-1) for param in model.parameters()])
+    productor = CurvVecProduct(loader, model, criterion, curvature_matrix)
+    utils.bn_update(full_loader, model)
+    Q, T = lanczos_tridiag(productor, lanczos_iters, dtype=torch.float32, device='cpu',
+                           matrix_shape=(num_parametrs, num_parametrs))
+    eigvals, eigvects = T.eig(eigenvectors=True)
+    gammas = eigvects[0, :] ** 2
+    V = eigvects.t() @ Q.t()
     if save_spectrum_path is not None:
         if save_eigvec:
             torch.save(
