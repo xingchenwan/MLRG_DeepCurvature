@@ -39,43 +39,67 @@ def train_network(
     Parameters
     ----------
     dir: str: the directory to which the models and statistics are saved
+
     dataset: str: ['CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32'*]: the dataset on which you would like to train the
     model. For ImageNet 32, we use the downsampled 32 x 32 Full ImageNet dataset. We do not provide download due to
     the proprietary issues, and please drop the data of ImageNet 32 in 'data/' folder
+
     data_path: str: the path string of the dataset
+
     model: str: the neural network architecture you would like to train. All available models are listed under 'models'/
     Example: VGG16BN, PreResNet110 (Preactivated ResNet - 110 layers)
+
     optimizer: str: the optimizer you would like to use. In additional to all the standard optimizers defined under
     torch.optim.Optimizer, in optimizer/ we defined some additional optimizers that you may use. Currently we only
     included SGD for the torch in-built optimizer. you may import yours manually by specifying the optimizer under
     optimizers/__init__.py
+
     optimizer_kwargs: dict: the keyword arguments to be supplied to the optimizer object. Some common ones include
     learning rate 'lr', momentum, weight decay, etc that are often optimizer-specific
+
     use_test: bool: if True, you will test the model on the test set. If not, a portion of the training data will be
     assigned as the validation set.
+
     batch_size: int: the minibatch size
+
     num_workers: int: number of workers for the dataloader
+
     resume: str: If not None, this string specifies a checkpoint containing the state-dict of the optimizer and the
     model from which pytorch may resume training
+
     epochs: int: total number of epochs of training
+
     save_freq: int: how frequent to save the model.
     Caution: for highly complicated modern models with many parameters, saving too often may quickly take up storage
     space.
+
     eval_freq: int: how frequent should the model evaluate on the validation/test dataset
+
     schedule: learning rate schedule. Allowed command = 'linear': linear decaying learning rate schedule and 'None':
     constant learning rate
+
     swag: whether to use Stochastic Weight Averaging (Gaussian)
+
     swag_no_cov: if True, no covariance matrix will be generated and we only have Stochastic Weight Averaging (instead
     of SWA-Gaussian)
+
     swag_resume: similar to ''resume'' argument, but on the SWA(G) model
+
     swag_subspace: *only applicable if swag=True and swag_no_cov=False'* subspace of the SWAG model
+
     swag_lr: *only applicable if swag=True* the learning rate after swa is activated.
+
     swag_rank:  *only applicable if swag=True and swag_no_cov=False'* rank of SWAG Gaussian approx
+
     swag_start: *only applicable if swag=True*: the starting epoch number of weight averaging
+
     swag_c_epochs:  *only applicable if swag=True*: frequency of model collection for averaging
+
     verbose: if True, verbose and debugging information will be displayed
+
     device: ['cpu', 'cuda']: the device on which the model and all computations are performed. Strongly recommend 'cuda'
     for GPU accleration in CUDA-enabled Nvidia Devices
+
     seed: if not None, a manual seed for the pseudo-random number generation will be used.
 
     Returns

@@ -325,15 +325,28 @@ def hess_vec(vector, loader, model, criterion, cuda=True, bn_train_mode=True):
 
 
 # Xingchen Wan code addition - 29 Nov
-def curv_diag(loader, model, criterion, cuda=True, bn_train_mode=True, extensions=()):
+def curv_diag(loader, model, criterion, num_classes=100, cuda=True, bn_train_mode=True, extensions=None):
     """Compute the hessian/GGN diagonal element. This function uses backpack package and will fail otherwise.
-    The model and criterion need to be EXTENDED by backpack before use!"""
+    The model and criterion need to be EXTENDED by backpack before use!
+    Note that currently this model only supports AllCNN and VGG16.
+    """
     from functools import partial
+    from curvature.models.vgg import get_backpacked_VGG
     try:
         import backpack
     except ImportError:
         print('this function call requires backpack. Aborting')
         return
+
+    if model not in ['VGG16', 'AllCNN_CIFAR100']:
+        raise NotImplementedError(str(model) + " is not currently supported.")
+    elif model == 'VGG16':
+        model = get_backpacked_VGG(model, depth=6, num_classes=num_classes)
+
+    if extensions == 'ggn_diag': extensions = ('DiagGGNExact, ', )
+    elif extensions == 'hessian_diag': extensions = ('DiagHessian', )
+    elif extensions == 'gn_diag_mc': extensions = ('DiagGGNMc', )
+    else: raise NotImplementedError
 
     # dictionary between the name of the method and the name of variable
     method2variable = {
