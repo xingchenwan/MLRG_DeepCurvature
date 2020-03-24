@@ -1,10 +1,12 @@
 # MLRG Deep Curvature
 
-MLRG Deep Curvature is a PyTorch-based package to analyse and visualise neural network curvature and loss landscape.
+(Updated 24 Mar 2020)
+
+MLRG Deep Curvature is a PyTorch-based [1] package to analyse and visualise neural network curvature and loss landscape, powered by GPU-accelerated Lanczos algorithm built by GPytorch [2].
 
 ## Network training and evaluation 
 
-The package provides a range of pre-built modern popular neural network structures, such as VGG and variants of ResNets, and various optimisation schemes in addition to the ones already present in the PyTorch frameworks, such as K-FAC and SWATS. These facilitates faster training and evaluation of the networks (although it is worth noting that any PyTorch-compatible optimisers or architectures can be easily integrated into its analysis framework).
+The package provides a range of pre-built modern popular neural network structures, such as VGG [3] and variants of ResNets [4], and various optimisation schemes in addition to the ones already present in the PyTorch frameworks, such as K-FAC [5] and SWATS [6]. These facilitates faster training and evaluation of the networks (although it is worth noting that any PyTorch-compatible optimisers or architectures can be easily integrated into its analysis framework).
     
 ## Eigenspectrum analysis of the curvature matrices
 
@@ -20,10 +22,19 @@ For all main features above, accompanying visualisation tools are included. In a
 
 For an illustrated example of its use, please see example.ipynb.
 
-References:
-1. Gardner, J., Pleiss, G., Weinberger, K.Q., Bindel, D. and Wilson, A.G., 2018. Gpytorch: Blackbox matrix-matrix gaussian process inference with gpu acceleration. In Advances in Neural Information Processing Systems (pp. 7576-7586).
 
-2. Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., Killeen, T., Lin, Z., Gimelshein, N., Antiga, L. and Desmaison, A., 2019. PyTorch: An imperative style, high-performance deep learning library. In Advances in Neural Information Processing Systems (pp. 8024-8035).
+References:
+
+1. Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., Killeen, T., Lin, Z., Gimelshein, N., Antiga, L. and Desmaison, A., 2019. PyTorch: An imperative style, high-performance deep learning library. In Advances in Neural Information Processing Systems (pp. 8024-8035).
+
+
+2. Gardner, J., Pleiss, G., Weinberger, K.Q., Bindel, D. and Wilson, A.G., 2018. Gpytorch: Blackbox matrix-matrix gaussian process inference with gpu acceleration. In Advances in Neural Information Processing Systems (pp. 7576-7586).
+
 
 3. Simonyan, K. and Zisserman, A., 2014. Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.
 
+4. He, K., Zhang, X., Ren, S. and Sun, J., 2016. Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).
+
+5. Martens, J. and Grosse, R., 2015, June. Optimizing neural networks with kronecker-factored approximate curvature. In International conference on machine learning (pp. 2408-2417).
+
+6. Keskar, N.S. and Socher, R., 2017. Improving generalization performance by switching from adam to sgd. arXiv preprint arXiv:1712.07628.
