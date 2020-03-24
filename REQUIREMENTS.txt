@@ -1,0 +1,7 @@
+pytorch > 1.1.0
+gpytorch
+tabulate
+argparse
+numpy
+matplotlib
+seaborn 
