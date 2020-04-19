@@ -1,8 +1,12 @@
 # MLRG Deep Curvature
 
-(Updated 24 Mar 2020)
+(Updated 19 Apr 2020)
 
 MLRG Deep Curvature is a PyTorch-based [1] package to analyse and visualise neural network curvature and loss landscape, powered by GPU-accelerated Lanczos algorithm built by GPytorch [2].
+
+If you find our package is useful for your research, please consider citing below:
+
+MLRG Deep Curvature. Diego Granziol*, Xingchen Wan*, Timur Garipov*. In arXiv preprint: arXiv: 1912.09656. 2019.
 
 ## Network training and evaluation 
 
@@ -21,6 +25,8 @@ In addition to the commonly used statistics to evaluate network training and per
 For all main features above, accompanying visualisation tools are included. In addition, with the eigen-information obtained  visualisations of the loss landscape are also supported by studying the sensitivity of the neural network to perturbations of weights. One key difference is that, instead of random directions as featured in some other packages, this package perturbs the weights in the eigenvector directions explicitly.
 
 For an illustrated example of its use, please see example.ipynb.
+
+
 
 
 References:
